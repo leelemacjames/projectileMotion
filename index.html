@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projectile Motion - Interactive Workbook</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        nav {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn.active {
+            background: #764ba2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .content-section {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .theory-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .equation-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+        }
+
+        .algebra-steps {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #2196F3;
+        }
+
+        .algebra-steps .step {
+            margin: 10px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .algebra-steps .step-label {
+            font-weight: bold;
+            color: #2196F3;
+            margin-right: 10px;
+        }
+
+        .key-point {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .viz-container {
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .viz-container iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            display: block;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .attribution {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .attribution a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .attribution a:hover {
+            text-decoration: underline;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 700px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .hint {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .hint.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 1000px; }
+        }
+
+        .solution {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .solution.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .feedback {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+            display: block;
+        }
+
+        .viz-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .viz-tab {
+            padding: 10px 20px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .viz-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .viz-tab:hover {
+            background: #764ba2;
+            color: white;
+        }
+
+        .viz-content {
+            display: none;
+        }
+
+        .viz-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .nav-btn {
+                width: 100%;
+            }
+            
+            .viz-container iframe {
+                height: 400px;
+            }
+        }
+
+        .formula {
+            font-style: italic;
+            color: #764ba2;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .instruction {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📐 Projectile Motion</h1>
+            <p class="subtitle">IB Physics Interactive Workbook</p>
+        </header>
+
+        <nav>
+            <button class="nav-btn active" onclick="showSection('theory')">📚 Theory</button>
+            <button class="nav-btn" onclick="showSection('visualizations')">🎯 Visualizations</button>
+            <button class="nav-btn" onclick="showSection('questions')">✏️ Practice Questions</button>
+        </nav>
+
+        <!-- THEORY SECTION -->
+        <div id="theory" class="content-section active">
+            <h2>Projectile Motion Theory</h2>
+            
+            <div class="theory-content">
+                <h3>Independence of Horizontal and Vertical Motion</h3>
+                <p>When a projectile is launched in a uniform gravitational field, the horizontal and vertical components of motion are <strong>independent</strong>. The horizontal motion does not affect the vertical motion, and vice versa. Projectile motion can be understood as the <strong>superposition</strong> of horizontal and vertical motion.</p>
+            </div>
+
+            <div class="key-point">
+                <strong>⚡ Key Principle:</strong> No matter how fast the projectile moves horizontally, it cannot affect the vertical motion. Similarly, vertical motion doesn't influence horizontal motion.
+            </div>
+
+            <h3>Equations of Uniformly Accelerated Motion (UAM)</h3>
+            
+            <div class="theory-content">
+                <p>Projectile motion is described using four fundamental equations:</p>
+                
+                <div class="equation-box">
+                    <strong>(1)</strong> v = u + at
+                    <p style="font-size: 0.9em; margin-top: 5px; font-family: 'Segoe UI';">Calculates final velocity from initial velocity, acceleration, and time</p>
+                </div>
+
+                <div class="equation-box">
+                    <strong>(2)</strong> s = (u + v)t / 2
+                    <p style="font-size: 0.9em; margin-top: 5px; font-family: 'Segoe UI';">Calculates displacement from initial velocity, final velocity, and time</p>
+                </div>
+
+                <div class="equation-box">
+                    <strong>(3)</strong> s = ut + ½at²
+                    <p style="font-size: 0.9em; margin-top: 5px; font-family: 'Segoe UI';">Calculates displacement without needing final velocity</p>
+                </div>
+
+                <div class="equation-box">
+                    <strong>(4)</strong> v² = u² + 2as
+                    <p style="font-size: 0.9em; margin-top: 5px; font-family: 'Segoe UI';">Relates velocities and acceleration without time</p>
+                </div>
+            </div>
+
+            <h3>Special Case: Horizontal Motion</h3>
+            
+            <div class="theory-content">
+                <p>Since there are <strong>no horizontal forces</strong> acting on a projectile (excluding air resistance), the horizontal velocity is <strong>constant</strong>. This means <span class="formula">a<sub>horizontal</sub> = 0</span>.</p>
+                
+                <div class="key-point">
+                    <strong>Result:</strong> u<sub>horizontal</sub> = v<sub>horizontal</sub> (initial horizontal velocity equals final horizontal velocity)
+                </div>
+
+                <p>The UAM equations simplify dramatically for horizontal motion:</p>
+                
+                <div class="equation-box">
+                    <strong>Horizontal:</strong> s = ut  and  v = u
+                </div>
+
+                <div class="equation-box">
+                    <strong>Vertical:</strong> All four UAM equations apply with a = g = 9.81 m/s²
+                </div>
+            </div>
+
+            <h3>Connecting Horizontal and Vertical Motion</h3>
+            
+            <div class="theory-content">
+                <p>While horizontal and vertical motions are independent, they are <strong>connected through time</strong>. There is not a separate time for horizontal or vertical motion—the same time <span class="formula">t</span> applies to both directions.</p>
+                
+                <div class="key-point">
+                    <strong>Strategy:</strong> Often we solve for time using one direction (usually vertical), then apply that time to find displacement or velocity in the other direction.
+                </div>
+            </div>
+
+            <h3>Parabolic Trajectory</h3>
+            
+            <div class="theory-content">
+                <p>In the absence of air resistance, the trajectory of a projectile is <strong>parabolic</strong>.</p>
+                
+                <p><strong>Starting with:</strong></p>
+                <div class="equation-box">
+                    s<sub>h</sub> = u<sub>h</sub>t<br>
+                    s<sub>v</sub> = u<sub>v</sub>t + ½at²
+                </div>
+
+                <p><strong>Deriving the parabolic equation:</strong></p>
+                <div class="algebra-steps">
+                    <div class="step">
+                        <span class="step-label">Step 1:</span> From the first equation, make <em>t</em> the subject:<br>
+                        <code>t = s<sub>h</sub> / u<sub>h</sub></code>
+                    </div>
+                    <div class="step">
+                        <span class="step-label">Step 2:</span> Substitute this expression for <em>t</em> into the second equation:<br>
+                        <code>s<sub>v</sub> = u<sub>v</sub>(s<sub>h</sub>/u<sub>h</sub>) + ½a(s<sub>h</sub>/u<sub>h</sub>)²</code>
+                    </div>
+                    <div class="step">
+                        <span class="step-label">Step 3:</span> Simplify the expression:<br>
+                        <code>s<sub>v</sub> = (u<sub>v</sub>/u<sub>h</sub>)s<sub>h</sub> + (a/2u<sub>h</sub>²)s<sub>h</sub>²</code>
+                    </div>
+                    <div class="step">
+                        <span class="step-label">Step 4:</span> Rearrange to standard parabola form:<br>
+                        <code>s<sub>v</sub> = (a/2u<sub>h</sub>²)s<sub>h</sub>² + (u<sub>v</sub>/u<sub>h</sub>)s<sub>h</sub></code>
+                    </div>
+                </div>
+
+                <p>This has the form <strong>y = ax² + bx</strong>, which is the equation of a parabola where:</p>
+                <ul>
+                    <li><strong>a</strong> = a/(2u<sub>h</sub>²) — determines the curvature</li>
+                    <li><strong>b</strong> = u<sub>v</sub>/u<sub>h</sub> — determines the initial slope</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- VISUALIZATIONS SECTION -->
+        <div id="visualizations" class="content-section">
+            <h2>Interactive GeoGebra Visualizations</h2>
+            
+            <div class="instruction">
+                <strong>📁 Setup Instructions:</strong>
+                <ol>
+                    <li>Download the following GeoGebra files: <code>projectileGeneric.html</code>, <code>proejectileBuilding.html</code>, and <code>projectile-Wall.html</code></li>
+                    <li>Place them in the <strong>same folder</strong> as this workbook HTML file</li>
+                    <li>Refresh this page to see the interactive simulations below</li>
+                </ol>
+            </div>
+
+            <div class="theory-content">
+                <p>Explore different projectile motion scenarios using these interactive simulations. Adjust parameters and observe how the trajectory changes.</p>
+            </div>
+
+            <div class="viz-tabs">
+                <button class="viz-tab active" onclick="showViz('generic')">Generic Projectile</button>
+                <button class="viz-tab" onclick="showViz('building')">Building Launch</button>
+                <button class="viz-tab" onclick="showViz('wall')">Wall Scenario</button>
+            </div>
+
+            <div id="viz-generic" class="viz-content active">
+                <h3>Generic Projectile Motion</h3>
+                <div class="viz-container">
+                    <iframe src="projectileGeneric.html" id="iframe-generic"></iframe>
+                </div>
+                <div class="attribution">
+                    Interactive simulation created by <a href="https://www.geogebra.org/u/mawi" target="_blank">Mark Willis</a>
+                </div>
+            </div>
+
+            <div id="viz-building" class="viz-content">
+                <h3>Projectile from Building</h3>
+                <div class="viz-container">
+                    <iframe src="proejectileBuilding.html" id="iframe-building"></iframe>
+                </div>
+                <div class="attribution">
+                    Interactive simulation created by <a href="https://www.geogebra.org/u/mawi" target="_blank">Mark Willis</a>
+                </div>
+            </div>
+
+            <div id="viz-wall" class="viz-content">
+                <h3>Projectile and Wall</h3>
+                <div class="viz-container">
+                    <iframe src="projectile-Wall.html" id="iframe-wall"></iframe>
+                </div>
+                <div class="attribution">
+                    Interactive simulation created by <a href="https://www.geogebra.org/u/mawi" target="_blank">Mark Willis</a>
+                </div>
+            </div>
+
+            <div class="key-point" style="margin-top: 30px;">
+                <strong>💡 Exploration Tips:</strong>
+                <ul>
+                    <li>Vary initial velocity and launch angle</li>
+                    <li>Observe how horizontal velocity remains constant</li>
+                    <li>Notice how vertical velocity changes due to gravity</li>
+                    <li>Compare trajectories from different heights</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- QUESTIONS SECTION -->
+        <div id="questions" class="content-section">
+            <h2>Practice Questions</h2>
+
+            <!-- QUESTION 7 -->
+            <div class="question-card">
+                <h3>Question 7: Ball Thrown from Tower</h3>
+                <p>The diagram below shows the path of a ball thrown horizontally from the top of a tower of height 24 m which is surrounded by level ground.</p>
+                
+                <div class="diagram-container">
+                    <svg width="100%" height="350" viewBox="0 0 600 350">
+                        <!-- Tower -->
+                        <rect x="50" y="50" width="80" height="240" fill="#999" stroke="#333" stroke-width="2"/>
+                        <rect x="50" y="50" width="80" height="30" fill="#666"/>
+                        <text x="10" y="170" font-size="18" fill="#333">24m</text>
+                        <line x1="20" y1="70" x2="20" y2="280" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <line x1="20" y1="280" x2="20" y2="70" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- Ground -->
+                        <line x1="0" y1="290" x2="600" y2="290" stroke="#654321" stroke-width="4"/>
+                        <pattern id="ground" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <line x1="0" y1="0" x2="20" y2="20" stroke="#654321" stroke-width="1"/>
+                        </pattern>
+                        <rect x="0" y="290" width="600" height="10" fill="url(#ground)"/>
+                        
+                        <!-- Parabolic trajectory -->
+                        <path d="M 130 65 Q 300 100, 480 285" fill="none" stroke="#667eea" stroke-width="3" stroke-dasharray="5,5"/>
+                        
+                        <!-- Point P -->
+                        <circle cx="125" cy="70" r="6" fill="#e74c3c"/>
+                        <text x="135" y="75" font-size="20" font-weight="bold" fill="#e74c3c">P</text>
+                        
+                        <!-- Landing point marker -->
+                        <line x1="480" y1="280" x2="480" y2="300" stroke="#e74c3c" stroke-width="2"/>
+                        <text x="465" y="335" font-size="16" fill="#333">27m</text>
+                        <line x1="130" y1="310" x2="130" y2="320" stroke="#333" stroke-width="1"/>
+                        <line x1="480" y1="310" x2="480" y2="320" stroke="#333" stroke-width="1"/>
+                        <line x1="130" y1="315" x2="480" y2="315" stroke="#333" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        <line x1="480" y1="315" x2="130" y2="315" stroke="#333" stroke-width="2" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Arrow definitions -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                <polygon points="0 0, 10 5, 0 10" fill="#333"/>
+                            </marker>
+                            <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                <polygon points="0 0, 10 5, 0 10" fill="#333"/>
+                            </marker>
+                        </defs>
+                        
+                        <!-- Labels -->
+                        <text x="60" y="35" font-size="18" font-weight="bold" fill="#333">Tower</text>
+                        <text x="20" y="330" font-size="16" fill="#333">Ground</text>
+                    </svg>
+                </div>
+
+                <h4>(a) Velocity and Acceleration Vectors at Point P</h4>
+                <div class="input-group">
+                    <label>Describe the direction of velocity vector v at point P:</label>
+                    <textarea id="q7a-velocity" rows="2" placeholder="Enter your answer..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Describe the direction of acceleration vector a at point P:</label>
+                    <textarea id="q7a-accel" rows="2" placeholder="Enter your answer..."></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="toggleHint('q7a')">💡 Show Hint</button>
+                <button class="btn btn-primary" onclick="checkAnswer('q7a')">Check Answer</button>
+                
+                <div id="q7a-hint" class="hint">
+                    <strong>Hint:</strong> The velocity vector is tangent to the trajectory (combining horizontal and vertical components). What's the only force acting on the ball?
+                </div>
+                <div id="q7a-feedback" class="feedback"></div>
+                <div id="q7a-solution" class="solution">
+                    <strong>Solution:</strong>
+                    <ul>
+                        <li><strong>Velocity v:</strong> Directed tangent to the curve at P, pointing downward and to the right (combining constant horizontal velocity with increasing downward vertical velocity)</li>
+                        <li><strong>Acceleration a:</strong> Directed vertically downward (gravity is the only force, g = 9.81 m/s²)</li>
+                    </ul>
+                </div>
+
+                <h4>(b)(i) Time to Hit Ground</h4>
+                <div class="input-group">
+                    <label>Calculate the time taken from when the ball is thrown to when it hits the ground:</label>
+                    <input type="number" id="q7bi-time" step="0.01" placeholder="Enter time in seconds">
+                    <span> seconds</span>
+                </div>
+                <button class="btn btn-secondary" onclick="toggleHint('q7bi')">💡 Show Hint</button>
+                <button class="btn btn-primary" onclick="checkAnswer('q7bi')">Check Answer</button>
+                
+                <div id="q7bi-hint" class="hint">
+                    <strong>Hint:</strong> Use vertical motion only. Initial vertical velocity u<sub>v</sub> = 0 (thrown horizontally), height s = 24 m, acceleration a = 9.81 m/s². Which equation relates s, u, a, and t?
+                </div>
+                <div id="q7bi-feedback" class="feedback"></div>
+                <div id="q7bi-solution" class="solution">
+                    <strong>Solution:</strong>
+                    <div class="algebra-steps">
+                        <div class="step">
+                            <span class="step-label">Given:</span> s = 24 m, u = 0 m/s (horizontal throw), a = 9.81 m/s²
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Equation:</span> s = ut + ½at²
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Substitute:</span> 24 = 0 × t + ½ × 9.81 × t²
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Simplify:</span> 24 = 4.905t²
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Solve:</span> t² = 24/4.905 = 4.893
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Answer:</span> t = √4.893 = <strong>2.21 seconds</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <h4>(b)(ii) Horizontal Launch Speed</h4>
+                <div class="input-group">
+                    <label>The ball hits the ground 27 m from the base. Calculate the speed at which the ball is thrown:</label>
+                    <input type="number" id="q7bii-speed" step="0.01" placeholder="Enter speed in m/s">
+                    <span> m/s</span>
+                </div>
+                <button class="btn btn-secondary" onclick="toggleHint('q7bii')">💡 Show Hint</button>
+                <button class="btn btn-primary" onclick="checkAnswer('q7bii')">Check Answer</button>
+                
+                <div id="q7bii-hint" class="hint">
+                    <strong>Hint:</strong> Use horizontal motion: s<sub>h</sub> = u<sub>h</sub>t. You know s<sub>h</sub> = 27 m and you calculated t in part (i). The horizontal velocity is constant!
+                </div>
+                <div id="q7bii-feedback" class="feedback"></div>
+                <div id="q7bii-solution" class="solution">
+                    <strong>Solution:</strong>
+                    <div class="algebra-steps">
+                        <div class="step">
+                            <span class="step-label">Given:</span> s<sub>h</sub> = 27 m, t = 2.21 s (from part i)
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Equation:</span> s = ut (horizontal motion, a = 0)
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Substitute:</span> 27 = u × 2.21
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Solve:</span> u = 27/2.21
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Answer:</span> u = <strong>12.2 m/s</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION 8 -->
+            <div class="question-card">
+                <h3>Question 8: Aeroplane Dropping Crate</h3>
+                <p>An aeroplane is travelling horizontally at 95 m/s. It has to drop a crate of emergency supplies. Air resistance acting on the crate may be neglected.</p>
+
+                <div class="diagram-container">
+                    <svg width="100%" height="300" viewBox="0 0 700 300">
+                        <!-- Sky background -->
+                        <rect x="0" y="0" width="700" height="250" fill="#e3f2fd"/>
+                        
+                        <!-- Aeroplane -->
+                        <g transform="translate(100, 80)">
+                            <!-- Body -->
+                            <ellipse cx="40" cy="0" rx="60" ry="15" fill="#999"/>
+                            <!-- Wings -->
+                            <rect x="-10" y="-5" width="100" height="10" fill="#666"/>
+                            <!-- Tail -->
+                            <polygon points="90,-5 120,0 90,5" fill="#666"/>
+                            <!-- Windows -->
+                            <circle cx="10" cy="0" r="4" fill="#4fc3f7"/>
+                            <circle cx="25" cy="0" r="4" fill="#4fc3f7"/>
+                            <circle cx="40" cy="0" r="4" fill="#4fc3f7"/>
+                        </g>
+                        
+                        <!-- Velocity arrow -->
+                        <defs>
+                              <marker id="velocity-arrow" markerWidth="50" markerHeight="10" refX="0" refY="5" orient="auto">
+                              <!-- Long tail line -->
+                                <line x1="50" y1="5" x2="8" y2="5" stroke="#e74c3c" stroke-width="2"/>
+                              <!-- Small arrowhead -->
+                                <polygon points="8 2, 0 5, 8 8" fill="#e74c3c"/>
+                              </marker>
+                        </defs>
+                        <line x1="40" y1="60" x2="10" y2="60" stroke="#e74c3c" stroke-width="3" marker-start="url(#velocity-arrow)"/>
+                        <text x="15" y="40" font-size="16" fill="#e74c3c" font-weight="bold">95 m/s</text>
+                        
+                        <!-- Point P (release) -->
+                        <circle cx="140" cy="80" r="6" fill="#ff5722"/>
+                        <text x="150" y="60" font-size="18" font-weight="bold" fill="#ff5722">P</text>
+                        
+                        <!-- Parabolic path -->
+                        <path d="M 140 80 Q 350 120, 550 240" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="5,5"/>
+                        
+                        <!-- Ground -->
+                        <line x1="0" y1="250" x2="700" y2="250" stroke="#654321" stroke-width="4"/>
+                        <rect x="0" y="250" width="700" height="10" fill="#8d6e63"/>
+                        
+                        <!-- Point Q (landing) -->
+                        <circle cx="550" cy="245" r="6" fill="#4caf50"/>
+                        <text x="530" y="235" font-size="18" font-weight="bold" fill="#4caf50">Q</text>
+                        
+                        <!-- Point R (ground below P) -->
+                        <circle cx="140" cy="250" r="4" fill="#333"/>
+                        <text x="150" y="285" font-size="16" font-weight="bold" fill="#333">R</text>
+                        
+                        <!-- Distance QR -->
+                        <line x1="140" y1="265" x2="550" y2="265" stroke="#333" stroke-width="2" marker-end="url(#arrow-qr)"/>
+                        <line x1="550" y1="265" x2="140" y2="265" stroke="#333" stroke-width="2" marker-end="url(#arrow-qr)"/>
+                        <text x="320" y="285" font-size="16" fill="#333" text-anchor="middle">Horizontal distance QR</text>
+                        
+                        <defs>
+                            <marker id="arrow-qr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                                <polygon points="0 0, 8 4, 0 8" fill="#333"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h4>(a)(i) Sketch the Path</h4>
+                <div class="input-group">
+                    <label>Describe the path followed by the crate from P to Q as seen from the ground:</label>
+                    <textarea id="q8ai-path" rows="3" placeholder="Describe the shape..."></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="toggleHint('q8ai')">💡 Show Hint</button>
+                <button class="btn btn-primary" onclick="checkAnswer('q8ai')">Check Answer</button>
+                
+                <div id="q8ai-hint" class="hint">
+                    <strong>Hint:</strong> What shape does projectile motion create? The crate maintains the plane's horizontal velocity while accelerating downward.
+                </div>
+                <div id="q8ai-feedback" class="feedback"></div>
+                <div id="q8ai-solution" class="solution">
+                    <strong>Solution:</strong> The path is a <strong>parabola</strong> (or parabolic curve), starting at P with horizontal motion and curving downward to land at Q.
+                </div>
+
+                <h4>(a)(ii) Constant Horizontal Velocity</h4>
+                <div class="input-group">
+                    <label>Explain why the horizontal component of the crate's velocity remains constant:</label>
+                    <textarea id="q8aii-explain" rows="3" placeholder="Enter your explanation..."></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="toggleHint('q8aii')">💡 Show Hint</button>
+                <button class="btn btn-primary" onclick="checkAnswer('q8aii')">Check Answer</button>
+                
+                <div id="q8aii-hint" class="hint">
+                    <strong>Hint:</strong> Think about forces. What horizontal forces act on the crate after it's released? (Remember: air resistance is neglected)
+                </div>
+                <div id="q8aii-feedback" class="feedback"></div>
+                <div id="q8aii-solution" class="solution">
+                    <strong>Solution:</strong> There is <strong>no horizontal force</strong> acting on the crate (air resistance is neglected). By Newton's First Law, in the absence of a net force, the horizontal velocity remains constant at 95 m/s.
+                </div>
+
+                <h4>(b)(i) Maximum Drop Height</h4>
+                <div class="input-group">
+                    <label>Show that the maximum height is approximately 52 m (given max vertical velocity = 32 m/s on landing):</label>
+                    <textarea id="q8bi-working" rows="4" placeholder="Show your working..."></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="toggleHint('q8bi')">💡 Show Hint</button>
+                <button class="btn btn-primary" onclick="checkAnswer('q8bi')">Check Answer</button>
+                
+                <div id="q8bi-hint" class="hint">
+                    <strong>Hint:</strong> Use v² = u² + 2as for vertical motion. Initial vertical velocity u = 0, final v = 32 m/s, a = 9.81 m/s². Solve for s.
+                </div>
+                <div id="q8bi-feedback" class="feedback"></div>
+                <div id="q8bi-solution" class="solution">
+                    <strong>Solution:</strong>
+                    <div class="algebra-steps">
+                        <div class="step">
+                            <span class="step-label">Given:</span> u = 0 m/s, v = 32 m/s, a = 9.81 m/s²
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Equation:</span> v² = u² + 2as
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Substitute:</span> (32)² = 0² + 2(9.81)s
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Simplify:</span> 1024 = 19.62s
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Solve:</span> s = 1024/19.62 = 52.19 m
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Answer:</span> s ≈ <strong>52 m</strong> ✓
+                        </div>
+                    </div>
+                </div>
+
+                <h4>(b)(ii) Time to Reach Ground</h4>
+                <div class="input-group">
+                    <label>Calculate time taken for the crate to reach the ground (from height 52 m):</label>
+                    <input type="number" id="q8bii-time" step="0.01" placeholder="Enter time in seconds">
+                    <span> seconds</span>
+                </div>
+                <button class="btn btn-secondary" onclick="toggleHint('q8bii')">💡 Show Hint</button>
+                <button class="btn btn-primary" onclick="checkAnswer('q8bii')">Check Answer</button>
+                
+                <div id="q8bii-hint" class="hint">
+                    <strong>Hint:</strong> You can use either v = u + at (with v = 32 m/s) or s = ut + ½at² (with s = 52 m). Both should give the same answer!
+                </div>
+                <div id="q8bii-feedback" class="feedback"></div>
+                <div id="q8bii-solution" class="solution">
+                    <strong>Solution (Method 1):</strong>
+                    <div class="algebra-steps">
+                        <div class="step">
+                            <span class="step-label">Given:</span> u = 0, v = 32 m/s, a = 9.81 m/s²
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Equation:</span> v = u + at
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Substitute:</span> 32 = 0 + 9.81t
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Solve:</span> t = 32/9.81
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Answer:</span> t = <strong>3.26 seconds</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <h4>(b)(iii) Horizontal Distance QR</h4>
+                <div class="input-group">
+                    <label>Calculate the horizontal distance QR (R is directly below P):</label>
+                    <input type="number" id="q8biii-distance" step="0.1" placeholder="Enter distance in meters">
+                    <span> meters</span>
+                </div>
+                <button class="btn btn-secondary" onclick="toggleHint('q8biii')">💡 Show Hint</button>
+                <button class="btn btn-primary" onclick="checkAnswer('q8biii')">Check Answer</button>
+                
+                <div id="q8biii-hint" class="hint">
+                    <strong>Hint:</strong> Horizontal motion: s = vt. Horizontal velocity = 95 m/s (constant!), time = 3.26 s from part (ii).
+                </div>
+                <div id="q8biii-feedback" class="feedback"></div>
+                <div id="q8biii-solution" class="solution">
+                    <strong>Solution:</strong>
+                    <div class="algebra-steps">
+                        <div class="step">
+                            <span class="step-label">Given:</span> v = 95 m/s (constant), t = 3.26 s
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Equation:</span> s = vt (horizontal motion, a = 0)
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Substitute:</span> s = 95 × 3.26
+                        </div>
+                        <div class="step">
+                            <span class="step-label">Answer:</span> s = <strong>310 m</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-point" style="margin-top: 30px;">
+                <strong>🎯 Problem-Solving Strategy:</strong>
+                <ol>
+                    <li>Identify initial conditions (velocities, height, angle)</li>
+                    <li>Split into horizontal and vertical components</li>
+                    <li>Remember: horizontal velocity is constant (if air resistance is neglected)</li>
+                    <li>Use appropriate UAM equations for vertical motion (a = g)</li>
+                    <li>Connect horizontal and vertical through time</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation between sections
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            const buttons = document.querySelectorAll('.nav-btn');
+            
+            sections.forEach(section => section.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Visualization tabs
+        function showViz(vizId) {
+            const tabs = document.querySelectorAll('.viz-tab');
+            const contents = document.querySelectorAll('.viz-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById('viz-' + vizId).classList.add('active');
+        }
+
+        // Check if iframes loaded successfully
+        window.addEventListener('load', function() {
+            const iframes = ['iframe-generic', 'iframe-building', 'iframe-wall'];
+            iframes.forEach(id => {
+                const iframe = document.getElementById(id);
+                if (iframe) {
+                    iframe.onerror = function() {
+                        iframe.parentElement.innerHTML = `
+                            <p style="color: #999; padding: 50px; text-align: center;">
+                                ⚠️ GeoGebra file not found. Please place the HTML files in the same folder as this workbook.
+                            </p>
+                        `;
+                    };
+                }
+            });
+        });
+
+        // Toggle hints
+        function toggleHint(questionId) {
+            const hint = document.getElementById(questionId + '-hint');
+            hint.classList.toggle('show');
+        }
+
+        // Answer checking with tolerance
+        function checkAnswer(questionId) {
+            const feedbackDiv = document.getElementById(questionId + '-feedback');
+            const solutionDiv = document.getElementById(questionId + '-solution');
+            let isCorrect = false;
+            let feedbackText = '';
+
+            // Q7a - vectors
+            if (questionId === 'q7a') {
+                const velocity = document.getElementById('q7a-velocity').value.toLowerCase();
+                const accel = document.getElementById('q7a-accel').value.toLowerCase();
+                
+                const velCorrect = velocity.includes('tangent') || velocity.includes('diagonal') || (velocity.includes('down') && velocity.includes('right'));
+                const accelCorrect = accel.includes('down') || accel.includes('vertical') || accel.includes('gravity');
+                
+                isCorrect = velCorrect && accelCorrect;
+                feedbackText = isCorrect ? 
+                    '✅ Correct! The velocity is tangent to the trajectory, and acceleration is downward due to gravity.' :
+                    '❌ Not quite. Consider the direction of motion and what forces act on the ball.';
+            }
+
+            // Q7bi - time
+            if (questionId === 'q7bi') {
+                const answer = parseFloat(document.getElementById('q7bi-time').value);
+                const correct = 2.21;
+                isCorrect = Math.abs(answer - correct) < 0.05;
+                feedbackText = isCorrect ?
+                    '✅ Correct! t = 2.21 s' :
+                    `❌ Not quite. Expected approximately ${correct} s. Check your calculation using s = ut + ½at².`;
+            }
+
+            // Q7bii - speed
+            if (questionId === 'q7bii') {
+                const answer = parseFloat(document.getElementById('q7bii-speed').value);
+                const correct = 12.2;
+                isCorrect = Math.abs(answer - correct) < 0.3;
+                feedbackText = isCorrect ?
+                    '✅ Correct! u = 12.2 m/s' :
+                    `❌ Not quite. Expected approximately ${correct} m/s. Use s = ut with the time from part (i).`;
+            }
+
+            // Q8ai - path
+            if (questionId === 'q8ai') {
+                const answer = document.getElementById('q8ai-path').value.toLowerCase();
+                isCorrect = answer.includes('parabola') || answer.includes('parabolic') || answer.includes('curve');
+                feedbackText = isCorrect ?
+                    '✅ Correct! The path is parabolic.' :
+                    '❌ Not quite. What shape does projectile motion create?';
+            }
+
+            // Q8aii - explanation
+            if (questionId === 'q8aii') {
+                const answer = document.getElementById('q8aii-explain').value.toLowerCase();
+                isCorrect = (answer.includes('no') && answer.includes('force')) || 
+                           (answer.includes('newton') && answer.includes('first'));
+                feedbackText = isCorrect ?
+                    '✅ Correct! No horizontal force means constant horizontal velocity.' :
+                    '❌ Consider what forces act horizontally on the crate.';
+            }
+
+            // Q8bi - max height
+            if (questionId === 'q8bi') {
+                const answer = document.getElementById('q8bi-working').value.toLowerCase();
+                isCorrect = answer.includes('52') && (answer.includes('v²') || answer.includes('v2'));
+                feedbackText = isCorrect ?
+                    '✅ Good working! The calculation confirms h ≈ 52 m.' :
+                    '❌ Show the calculation using v² = u² + 2as to verify h ≈ 52 m.';
+            }
+
+            // Q8bii - time
+            if (questionId === 'q8bii') {
+                const answer = parseFloat(document.getElementById('q8bii-time').value);
+                const correct = 3.26;
+                isCorrect = Math.abs(answer - correct) < 0.05;
+                feedbackText = isCorrect ?
+                    '✅ Correct! t = 3.26 s' :
+                    `❌ Not quite. Expected approximately ${correct} s.`;
+            }
+
+            // Q8biii - distance
+            if (questionId === 'q8biii') {
+                const answer = parseFloat(document.getElementById('q8biii-distance').value);
+                const correct = 310;
+                isCorrect = Math.abs(answer - correct) < 5;
+                feedbackText = isCorrect ?
+                    '✅ Correct! Horizontal distance = 310 m' :
+                    `❌ Not quite. Expected approximately ${correct} m. Use s = vt.`;
+            }
+
+            // Display feedback
+            feedbackDiv.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackDiv.textContent = feedbackText;
+            
+            // Show solution after checking
+            if (!solutionDiv.classList.contains('show')) {
+                setTimeout(() => {
+                    solutionDiv.classList.add('show');
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
